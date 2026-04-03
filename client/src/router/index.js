@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 import AdminView from '../views/AdminView.vue'
+import AssignmentDetailView from '../views/AssignmentDetailView.vue'
+import AssignmentsView from '../views/AssignmentsView.vue'
 import AnnouncementsView from '../views/AnnouncementsView.vue'
 import AnnouncementDetailView from '../views/AnnouncementDetailView.vue'
 import CalendarEntryDetailView from '../views/CalendarEntryDetailView.vue'
@@ -8,6 +10,8 @@ import CalendarView from '../views/CalendarView.vue'
 import CourseDetailView from '../views/CourseDetailView.vue'
 import CoursesView from '../views/CoursesView.vue'
 import DashboardView from '../views/DashboardView.vue'
+import GradeDetailView from '../views/GradeDetailView.vue'
+import GradesView from '../views/GradesView.vue'
 import LoginView from '../views/LoginView.vue'
 import MessageDetailView from '../views/MessageDetailView.vue'
 import MessagesView from '../views/MessagesView.vue'
@@ -51,6 +55,26 @@ const router = createRouter({
       path: '/courses/:code',
       name: 'course-detail',
       component: CourseDetailView,
+    },
+    {
+      path: '/grades',
+      name: 'grades',
+      component: GradesView,
+    },
+    {
+      path: '/grades/:courseCode',
+      name: 'grade-detail',
+      component: GradeDetailView,
+    },
+    {
+      path: '/assignments',
+      name: 'assignments',
+      component: AssignmentsView,
+    },
+    {
+      path: '/assignments/:slug',
+      name: 'assignment-detail',
+      component: AssignmentDetailView,
     },
     {
       path: '/calendar',

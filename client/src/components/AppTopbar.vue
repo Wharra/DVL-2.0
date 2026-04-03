@@ -26,6 +26,8 @@ const initials = computed(() => props.student.name
 const navigation = [
   { label: 'Dashboard', to: '/dashboard' },
   { label: 'Cours', to: '/courses' },
+  { label: 'Notes', to: '/grades' },
+  { label: 'Devoirs', to: '/assignments' },
   { label: 'Calendrier', to: '/calendar' },
   { label: 'Messages', to: '/messages' },
   { label: 'Annonces', to: '/announcements' },

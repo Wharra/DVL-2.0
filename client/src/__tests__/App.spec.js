@@ -109,6 +109,42 @@ describe('App', () => {
     expect(wrapper.text()).toContain('Sessions liees')
   })
 
+  it('renders the grades view in demo mode', async () => {
+    vi.stubGlobal('fetch', vi.fn())
+
+    await router.push('/grades?demo=1')
+    await router.isReady()
+
+    const wrapper = mount(App, {
+      global: {
+        plugins: [createPinia(), router],
+      },
+    })
+
+    await flushPromises()
+
+    expect(wrapper.text()).toContain('Mes notes')
+    expect(wrapper.findAll('[data-testid="grade-card"]')).toHaveLength(6)
+  })
+
+  it('renders the assignments view in demo mode', async () => {
+    vi.stubGlobal('fetch', vi.fn())
+
+    await router.push('/assignments?demo=1')
+    await router.isReady()
+
+    const wrapper = mount(App, {
+      global: {
+        plugins: [createPinia(), router],
+      },
+    })
+
+    await flushPromises()
+
+    expect(wrapper.text()).toContain('Devoirs')
+    expect(wrapper.findAll('[data-testid="assignment-card"]')).toHaveLength(6)
+  })
+
   it('fills the blockchain course detail with linked schedule and announcements', async () => {
     vi.stubGlobal('fetch', vi.fn())
 
@@ -125,6 +161,43 @@ describe('App', () => {
 
     expect(wrapper.text()).toContain('Blockchain Programming')
     expect(wrapper.text()).toContain('Mar 10:15')
+    expect(wrapper.text()).toContain('Feedback smart contract disponible')
+  })
+
+  it('renders the grade detail page in demo mode', async () => {
+    vi.stubGlobal('fetch', vi.fn())
+
+    await router.push('/grades/MESIIN470625?demo=1')
+    await router.isReady()
+
+    const wrapper = mount(App, {
+      global: {
+        plugins: [createPinia(), router],
+      },
+    })
+
+    await flushPromises()
+
+    expect(wrapper.text()).toContain('Blockchain Programming')
+    expect(wrapper.text()).toContain('Smart Contract TP')
+    expect(wrapper.text()).toContain('TP Smart Contract Feedback')
+  })
+
+  it('renders the assignment detail page in demo mode', async () => {
+    vi.stubGlobal('fetch', vi.fn())
+
+    await router.push('/assignments/blockchain-smart-contract-feedback?demo=1')
+    await router.isReady()
+
+    const wrapper = mount(App, {
+      global: {
+        plugins: [createPinia(), router],
+      },
+    })
+
+    await flushPromises()
+
+    expect(wrapper.text()).toContain('TP Smart Contract Feedback')
     expect(wrapper.text()).toContain('Feedback smart contract disponible')
   })
 

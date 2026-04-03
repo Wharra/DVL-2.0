@@ -50,6 +50,28 @@ test('opens the demo dashboard from login and filters courses', async ({ page })
     page.getByRole('heading', { name: 'Rust Programming', level: 1 }),
   ).toBeVisible()
 
+  await page.getByRole('link', { name: 'Notes' }).click()
+  await expect(
+    page.getByRole('heading', { name: 'Mes notes', level: 1 }),
+  ).toBeVisible()
+  await expect(page.getByTestId('grade-card')).toHaveCount(6)
+  await page.getByTestId('grade-card').filter({ hasText: 'Blockchain Programming' }).click()
+  await expect(
+    page.getByRole('heading', { name: 'Blockchain Programming', level: 1 }),
+  ).toBeVisible()
+  await expect(page.getByText('Smart Contract TP')).toBeVisible()
+
+  await page.getByRole('link', { name: 'Devoirs' }).click()
+  await expect(
+    page.getByRole('heading', { name: 'Devoirs', level: 1 }),
+  ).toBeVisible()
+  await expect(page.getByTestId('assignment-card')).toHaveCount(6)
+  await page.getByTestId('assignment-card').filter({ hasText: 'TP Smart Contract Feedback' }).click()
+  await expect(
+    page.getByRole('heading', { name: 'TP Smart Contract Feedback', level: 1 }),
+  ).toBeVisible()
+  await expect(page.getByText('Feedback smart contract disponible')).toBeVisible()
+
   await page.getByRole('link', { name: 'Calendrier' }).click()
   await page.getByTestId('calendar-entry').first().getByRole('link').click()
   await expect(

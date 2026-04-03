@@ -1,6 +1,8 @@
 import Announcement from './announcement-schema.js'
+import Assignment from './assignment-schema.js'
 import Course from './course-schema.js'
 import Enrollment from './enrollment-schema.js'
+import GradeEntry from './grade-entry-schema.js'
 import Message from './message-schema.js'
 import ScheduleEntry from './schedule-entry-schema.js'
 
@@ -272,6 +274,160 @@ const messageSeeds = [
   },
 ]
 
+const assignmentSeeds = [
+  {
+    slug: 'advanced-probability-quiz-4',
+    courseCode: 'MESIFI470125',
+    title: 'Quiz 4',
+    detail: 'Quiz final a completer avant 23:59 avec une seule tentative autorisee.',
+    status: 'due_soon',
+    priority: 'high',
+    dueAt: new Date('2026-04-03T23:59:00+02:00'),
+    submittedAt: null,
+  },
+  {
+    slug: 'blockchain-smart-contract-feedback',
+    courseCode: 'MESIIN470625',
+    title: 'TP Smart Contract Feedback',
+    detail: 'Prendre en compte le feedback du contrat puis republier la version corrigee.',
+    status: 'in_review',
+    priority: 'medium',
+    dueAt: new Date('2026-04-07T10:15:00+02:00'),
+    submittedAt: new Date('2026-04-03T08:10:00+02:00'),
+  },
+  {
+    slug: 'machine-learning-forecasting-kickoff',
+    courseCode: 'MESIIN485925',
+    title: 'Projet Forecasting Kickoff',
+    detail: 'Initialiser le notebook, charger les donnees et documenter la strategie de baseline.',
+    status: 'not_started',
+    priority: 'high',
+    dueAt: new Date('2026-04-08T20:00:00+02:00'),
+    submittedAt: null,
+  },
+  {
+    slug: 'project-methodology-sprint-deck',
+    courseCode: 'MESIGP470325',
+    title: 'Sprint Review Deck',
+    detail: 'Preparer cinq slides de synthese pour le jury et repeter la demo.',
+    status: 'submitted',
+    priority: 'medium',
+    dueAt: new Date('2026-04-09T16:30:00+02:00'),
+    submittedAt: new Date('2026-04-08T21:00:00+02:00'),
+  },
+  {
+    slug: 'cryptography-problem-set-2',
+    courseCode: 'MESIIN484625',
+    title: 'Problem Set 2',
+    detail: 'Serie RSA et ElGamal a rendre avant le cours de vendredi.',
+    status: 'due_soon',
+    priority: 'medium',
+    dueAt: new Date('2026-04-10T11:00:00+02:00'),
+    submittedAt: null,
+  },
+  {
+    slug: 'rust-borrow-checker-lab',
+    courseCode: 'MESIIN473325',
+    title: 'Borrow Checker Lab',
+    detail: 'Finaliser les exercices ownership et joindre les captures de tests cargo.',
+    status: 'not_started',
+    priority: 'high',
+    dueAt: new Date('2026-04-10T18:00:00+02:00'),
+    submittedAt: null,
+  },
+]
+
+const gradeEntrySeeds = [
+  {
+    slug: 'advanced-probability-quiz-3-grade',
+    courseCode: 'MESIFI470125',
+    title: 'Quiz 3',
+    type: 'quiz',
+    score: 15,
+    outOf: 20,
+    coefficient: 1,
+    status: 'published',
+    returnedAt: new Date('2026-03-28T18:00:00+02:00'),
+  },
+  {
+    slug: 'advanced-probability-midterm-grade',
+    courseCode: 'MESIFI470125',
+    title: 'Midterm',
+    type: 'exam',
+    score: 14,
+    outOf: 20,
+    coefficient: 2,
+    status: 'published',
+    returnedAt: new Date('2026-03-20T18:00:00+02:00'),
+  },
+  {
+    slug: 'blockchain-smart-contract-grade',
+    courseCode: 'MESIIN470625',
+    title: 'Smart Contract TP',
+    type: 'lab',
+    score: 17,
+    outOf: 20,
+    coefficient: 2,
+    status: 'published',
+    returnedAt: new Date('2026-04-03T08:30:00+02:00'),
+  },
+  {
+    slug: 'machine-learning-anomaly-lab-grade',
+    courseCode: 'MESIIN485925',
+    title: 'Anomaly Detection Lab',
+    type: 'lab',
+    score: 14,
+    outOf: 20,
+    coefficient: 1,
+    status: 'published',
+    returnedAt: new Date('2026-03-29T16:00:00+02:00'),
+  },
+  {
+    slug: 'machine-learning-final-qcm',
+    courseCode: 'MESIIN485925',
+    title: 'QCM Blanc Final',
+    type: 'quiz',
+    score: null,
+    outOf: 20,
+    coefficient: 1,
+    status: 'pending',
+    returnedAt: null,
+  },
+  {
+    slug: 'project-methodology-sprint-review-grade',
+    courseCode: 'MESIGP470325',
+    title: 'Sprint Review',
+    type: 'presentation',
+    score: 16,
+    outOf: 20,
+    coefficient: 2,
+    status: 'published',
+    returnedAt: new Date('2026-04-02T15:00:00+02:00'),
+  },
+  {
+    slug: 'cryptography-problem-set-1-grade',
+    courseCode: 'MESIIN484625',
+    title: 'Problem Set 1',
+    type: 'exercise',
+    score: 13,
+    outOf: 20,
+    coefficient: 1,
+    status: 'published',
+    returnedAt: new Date('2026-03-31T17:00:00+02:00'),
+  },
+  {
+    slug: 'rust-ownership-lab-grade',
+    courseCode: 'MESIIN473325',
+    title: 'Ownership Lab',
+    type: 'lab',
+    score: 18,
+    outOf: 20,
+    coefficient: 1,
+    status: 'published',
+    returnedAt: new Date('2026-03-30T18:30:00+02:00'),
+  },
+]
+
 const discoveryItems = [
   'Resume IA de chaque cours en 30 secondes',
   'Agenda qui regroupe cours, rendus et examens',
@@ -340,6 +496,15 @@ const announcementRelations = {
   },
 }
 
+const assignmentAnnouncementRelations = {
+  'advanced-probability-quiz-4': ['quiz-probability-ouvert'],
+  'blockchain-smart-contract-feedback': ['smart-contract-feedback-publie'],
+  'machine-learning-forecasting-kickoff': ['erreur-de-salle-corrigee', 'qcm-final-publie'],
+  'project-methodology-sprint-deck': ['project-review-room-update'],
+  'cryptography-problem-set-2': ['cryptography-series-release'],
+  'rust-borrow-checker-lab': ['rust-lab-checklist'],
+}
+
 async function upsertMany(model, uniqueKey, documents) {
   await Promise.all(documents.map(document => model.updateOne(
     { [uniqueKey]: document[uniqueKey] },
@@ -350,7 +515,9 @@ async function upsertMany(model, uniqueKey, documents) {
 
 export async function ensureGlobalDashboardData() {
   await Promise.all([
+    upsertMany(Assignment, 'slug', assignmentSeeds),
     upsertMany(Course, 'code', courseSeeds),
+    upsertMany(GradeEntry, 'slug', gradeEntrySeeds),
     upsertMany(ScheduleEntry, 'key', scheduleSeeds),
     upsertMany(Announcement, 'slug', announcementSeeds),
     upsertMany(Message, 'slug', messageSeeds),
@@ -397,19 +564,24 @@ async function loadWorkspaceCollections(user) {
   await ensureGlobalDashboardData()
   await ensureUserEnrollments(user._id)
 
-  const [courses, enrollments, schedule, announcements, messages] = await Promise.all([
+  const [assignments, courses, enrollments, grades, schedule, announcements, messages] = await Promise.all([
+    Assignment.find({})
+      .sort({ dueAt: 1 })
+      .lean(),
     Course.find({})
       .sort({ title: 1 })
       .lean(),
     Enrollment.find({ userId: user._id })
       .sort({ updatedAt: -1 })
       .lean(),
+    GradeEntry.find({})
+      .sort({ returnedAt: -1, createdAt: -1 })
+      .lean(),
     ScheduleEntry.find({})
       .sort({ startsAt: 1 })
       .lean(),
     Announcement.find({})
       .sort({ publishedAt: -1 })
-      .limit(5)
       .lean(),
     Message.find({})
       .sort({ receivedAt: -1 })
@@ -418,8 +590,10 @@ async function loadWorkspaceCollections(user) {
   ])
 
   return {
+    assignments,
     courses,
     enrollments,
+    grades,
     schedule,
     announcements,
     messages,
@@ -490,6 +664,71 @@ function hydrateAnnouncements(announcements) {
   }))
 }
 
+function hydrateAssignments(assignments) {
+  return assignments.map(item => ({
+    slug: item.slug,
+    courseCode: item.courseCode,
+    title: item.title,
+    detail: item.detail,
+    status: item.status,
+    priority: item.priority,
+    dueAt: item.dueAt,
+    submittedAt: item.submittedAt,
+  }))
+}
+
+function hydrateGrades(grades) {
+  return grades.map(item => ({
+    slug: item.slug,
+    courseCode: item.courseCode,
+    title: item.title,
+    type: item.type,
+    score: item.score,
+    outOf: item.outOf,
+    coefficient: item.coefficient,
+    status: item.status,
+    returnedAt: item.returnedAt,
+  }))
+}
+
+function computeCourseAverage(entries) {
+  const gradedEntries = entries.filter(entry => typeof entry.score === 'number')
+
+  if (!gradedEntries.length) {
+    return null
+  }
+
+  const totals = gradedEntries.reduce((accumulator, entry) => {
+    const normalizedScore = (entry.score / entry.outOf) * 20
+    const weightedScore = normalizedScore * entry.coefficient
+
+    return {
+      coefficient: accumulator.coefficient + entry.coefficient,
+      score: accumulator.score + weightedScore,
+    }
+  }, { coefficient: 0, score: 0 })
+
+  return Number((totals.score / totals.coefficient).toFixed(1))
+}
+
+function buildGradeCourseSummaries(courses, grades) {
+  return courses.map((course) => {
+    const entries = grades.filter(entry => entry.courseCode === course.code)
+    const publishedCount = entries.filter(entry => entry.status === 'published').length
+    const pendingCount = entries.filter(entry => entry.status !== 'published').length
+    const average = computeCourseAverage(entries)
+
+    return {
+      average,
+      courseCode: course.code,
+      courseTitle: course.title,
+      lastReturnedAt: entries.find(entry => entry.returnedAt)?.returnedAt ?? null,
+      pendingCount,
+      publishedCount,
+    }
+  })
+}
+
 export async function getDashboardOverview(user) {
   const collections = await loadWorkspaceCollections(user)
   const dashboardCourses = hydrateCourses(
@@ -514,7 +753,7 @@ export async function getDashboardOverview(user) {
     },
     courses: dashboardCourses,
     timeline: hydrateCalendar(collections.schedule).slice(0, 4),
-    announcements: hydrateAnnouncements(collections.announcements),
+    announcements: hydrateAnnouncements(collections.announcements).slice(0, 4),
     messages: hydrateMessages(collections.messages).slice(0, 3),
     discovery: discoveryItems,
   }
@@ -601,6 +840,99 @@ export async function getProfileViewData(user) {
     },
     focusCourses: courses.filter(course => course.favorite || course.urgent).slice(0, 4),
     upcomingEntries,
+  }
+}
+
+export async function getAssignmentsViewData(user) {
+  const collections = await loadWorkspaceCollections(user)
+  const assignments = hydrateAssignments(collections.assignments)
+
+  return {
+    student: buildStudentProfile(user),
+    assignments,
+    summary: {
+      total: assignments.length,
+      dueSoon: assignments.filter(item => item.status === 'due_soon').length,
+      inReview: assignments.filter(item => item.status === 'in_review').length,
+      completed: assignments.filter(item => item.status === 'submitted').length,
+    },
+  }
+}
+
+export async function getAssignmentDetailData(user, slug) {
+  const collections = await loadWorkspaceCollections(user)
+  const assignments = hydrateAssignments(collections.assignments)
+  const assignment = assignments.find(item => item.slug === slug)
+
+  if (!assignment) {
+    return null
+  }
+
+  const relatedCourse = hydrateCourses(
+    collections.courses,
+    collections.enrollments,
+    collections.schedule,
+  ).find(course => course.code === assignment.courseCode) ?? null
+  const relatedAnnouncements = hydrateAnnouncements(collections.announcements)
+    .filter(item => (assignmentAnnouncementRelations[slug] ?? []).includes(item.slug))
+
+  return {
+    student: buildStudentProfile(user),
+    assignment,
+    relatedAnnouncements,
+    relatedCourse,
+  }
+}
+
+export async function getGradesViewData(user) {
+  const collections = await loadWorkspaceCollections(user)
+  const courses = hydrateCourses(
+    collections.courses,
+    collections.enrollments,
+    collections.schedule,
+  )
+  const grades = hydrateGrades(collections.grades)
+  const courseSummaries = buildGradeCourseSummaries(courses, grades)
+  const publishedGrades = grades.filter(entry => entry.status === 'published')
+
+  return {
+    student: buildStudentProfile(user),
+    courses: courseSummaries,
+    recentGrades: publishedGrades.slice(0, 5),
+    summary: {
+      globalAverage: computeCourseAverage(
+        publishedGrades.map(entry => ({ ...entry, coefficient: entry.coefficient })),
+      ),
+      pending: grades.filter(entry => entry.status !== 'published').length,
+      returned: publishedGrades.length,
+    },
+  }
+}
+
+export async function getGradeDetailData(user, courseCode) {
+  const collections = await loadWorkspaceCollections(user)
+  const courses = hydrateCourses(
+    collections.courses,
+    collections.enrollments,
+    collections.schedule,
+  )
+  const course = courses.find(item => item.code === courseCode)
+
+  if (!course) {
+    return null
+  }
+
+  const evaluations = hydrateGrades(collections.grades)
+    .filter(entry => entry.courseCode === courseCode)
+  const relatedAssignments = hydrateAssignments(collections.assignments)
+    .filter(item => item.courseCode === courseCode)
+
+  return {
+    student: buildStudentProfile(user),
+    course,
+    evaluations,
+    average: computeCourseAverage(evaluations),
+    relatedAssignments,
   }
 }
 
@@ -703,12 +1035,33 @@ export async function getAnnouncementDetailData(user, slug) {
 
 function buildAdminSections(collections) {
   return {
+    assignments: collections.assignments.map(item => ({
+      slug: item.slug,
+      courseCode: item.courseCode,
+      title: item.title,
+      detail: item.detail,
+      status: item.status,
+      priority: item.priority,
+      dueAt: item.dueAt,
+      submittedAt: item.submittedAt,
+    })),
     courses: collections.courses.map(course => ({
       code: course.code,
       title: course.title,
       category: course.category,
       accent: course.accent,
       glow: course.glow,
+    })),
+    grades: collections.grades.map(item => ({
+      slug: item.slug,
+      courseCode: item.courseCode,
+      title: item.title,
+      type: item.type,
+      score: item.score,
+      outOf: item.outOf,
+      coefficient: item.coefficient,
+      status: item.status,
+      returnedAt: item.returnedAt,
     })),
     announcements: collections.announcements.map(item => ({
       slug: item.slug,
@@ -744,7 +1097,9 @@ export async function getAdminViewData(user) {
     student: buildStudentProfile(user),
     sections: buildAdminSections(collections),
     summary: {
+      assignments: collections.assignments.length,
       courses: collections.courses.length,
+      grades: collections.grades.length,
       announcements: collections.announcements.length,
       schedule: collections.schedule.length,
       messages: collections.messages.length,
@@ -754,8 +1109,12 @@ export async function getAdminViewData(user) {
 
 function getModelForResource(resource) {
   switch (resource) {
+    case 'assignments':
+      return { model: Assignment, uniqueKey: 'slug' }
     case 'courses':
       return { model: Course, uniqueKey: 'code' }
+    case 'grades':
+      return { model: GradeEntry, uniqueKey: 'slug' }
     case 'announcements':
       return { model: Announcement, uniqueKey: 'slug' }
     case 'schedule':

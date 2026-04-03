@@ -11,6 +11,21 @@ import {
 } from '../services/dashboard.js'
 
 const resourceConfig = {
+  assignments: {
+    label: 'Devoirs',
+    identifier: 'slug',
+    fields: ['slug', 'courseCode', 'title', 'detail', 'status', 'priority', 'dueAt', 'submittedAt'],
+    defaults: {
+      slug: '',
+      courseCode: '',
+      title: '',
+      detail: '',
+      status: 'not_started',
+      priority: 'medium',
+      dueAt: new Date().toISOString(),
+      submittedAt: '',
+    },
+  },
   courses: {
     label: 'Cours',
     identifier: 'code',
@@ -21,6 +36,22 @@ const resourceConfig = {
       category: '',
       accent: '#111827',
       glow: '#93c5fd',
+    },
+  },
+  grades: {
+    label: 'Notes',
+    identifier: 'slug',
+    fields: ['slug', 'courseCode', 'title', 'type', 'score', 'outOf', 'coefficient', 'status', 'returnedAt'],
+    defaults: {
+      slug: '',
+      courseCode: '',
+      title: '',
+      type: 'quiz',
+      score: '',
+      outOf: 20,
+      coefficient: 1,
+      status: 'pending',
+      returnedAt: '',
     },
   },
   announcements: {
@@ -148,7 +179,9 @@ function startCreate() {
 function updateLocalSummary(resource) {
   const sections = payload.value.sections
   payload.value.summary = {
+    assignments: sections.assignments.length,
     courses: sections.courses.length,
+    grades: sections.grades.length,
     announcements: sections.announcements.length,
     schedule: sections.schedule.length,
     messages: sections.messages.length,
@@ -253,8 +286,16 @@ async function saveDraft() {
 
         <div class="stat-grid">
           <article class="stat-card">
+            <span>Devoirs</span>
+            <strong>{{ payload.summary.assignments }}</strong>
+          </article>
+          <article class="stat-card">
             <span>Cours</span>
             <strong>{{ payload.summary.courses }}</strong>
+          </article>
+          <article class="stat-card">
+            <span>Notes</span>
+            <strong>{{ payload.summary.grades }}</strong>
           </article>
           <article class="stat-card">
             <span>Calendrier</span>

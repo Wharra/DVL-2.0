@@ -36,6 +36,22 @@ export function fetchAnnouncementDetail(slug) {
   return apiRequest(`/dashboard/announcements/${slug}`)
 }
 
+export function fetchAssignmentsView() {
+  return apiRequest('/dashboard/assignments')
+}
+
+export function fetchAssignmentDetail(slug) {
+  return apiRequest(`/dashboard/assignments/${slug}`)
+}
+
+export function fetchGradesView() {
+  return apiRequest('/dashboard/grades')
+}
+
+export function fetchGradeDetail(courseCode) {
+  return apiRequest(`/dashboard/grades/${courseCode}`)
+}
+
 export function fetchProfileView() {
   return apiRequest('/dashboard/profile')
 }
@@ -278,6 +294,160 @@ const demoMessages = [
   },
 ]
 
+const demoAssignments = [
+  {
+    slug: 'advanced-probability-quiz-4',
+    courseCode: 'MESIFI470125',
+    title: 'Quiz 4',
+    detail: 'Quiz final a completer avant 23:59 avec une seule tentative autorisee.',
+    status: 'due_soon',
+    priority: 'high',
+    dueAt: '2026-04-03T23:59:00+02:00',
+    submittedAt: null,
+  },
+  {
+    slug: 'blockchain-smart-contract-feedback',
+    courseCode: 'MESIIN470625',
+    title: 'TP Smart Contract Feedback',
+    detail: 'Prendre en compte le feedback du contrat puis republier la version corrigee.',
+    status: 'in_review',
+    priority: 'medium',
+    dueAt: '2026-04-07T10:15:00+02:00',
+    submittedAt: '2026-04-03T08:10:00+02:00',
+  },
+  {
+    slug: 'machine-learning-forecasting-kickoff',
+    courseCode: 'MESIIN485925',
+    title: 'Projet Forecasting Kickoff',
+    detail: 'Initialiser le notebook, charger les donnees et documenter la strategie de baseline.',
+    status: 'not_started',
+    priority: 'high',
+    dueAt: '2026-04-08T20:00:00+02:00',
+    submittedAt: null,
+  },
+  {
+    slug: 'project-methodology-sprint-deck',
+    courseCode: 'MESIGP470325',
+    title: 'Sprint Review Deck',
+    detail: 'Preparer cinq slides de synthese pour le jury et repeter la demo.',
+    status: 'submitted',
+    priority: 'medium',
+    dueAt: '2026-04-09T16:30:00+02:00',
+    submittedAt: '2026-04-08T21:00:00+02:00',
+  },
+  {
+    slug: 'cryptography-problem-set-2',
+    courseCode: 'MESIIN484625',
+    title: 'Problem Set 2',
+    detail: 'Serie RSA et ElGamal a rendre avant le cours de vendredi.',
+    status: 'due_soon',
+    priority: 'medium',
+    dueAt: '2026-04-10T11:00:00+02:00',
+    submittedAt: null,
+  },
+  {
+    slug: 'rust-borrow-checker-lab',
+    courseCode: 'MESIIN473325',
+    title: 'Borrow Checker Lab',
+    detail: 'Finaliser les exercices ownership et joindre les captures de tests cargo.',
+    status: 'not_started',
+    priority: 'high',
+    dueAt: '2026-04-10T18:00:00+02:00',
+    submittedAt: null,
+  },
+]
+
+const demoGrades = [
+  {
+    slug: 'advanced-probability-quiz-3-grade',
+    courseCode: 'MESIFI470125',
+    title: 'Quiz 3',
+    type: 'quiz',
+    score: 15,
+    outOf: 20,
+    coefficient: 1,
+    status: 'published',
+    returnedAt: '2026-03-28T18:00:00+02:00',
+  },
+  {
+    slug: 'advanced-probability-midterm-grade',
+    courseCode: 'MESIFI470125',
+    title: 'Midterm',
+    type: 'exam',
+    score: 14,
+    outOf: 20,
+    coefficient: 2,
+    status: 'published',
+    returnedAt: '2026-03-20T18:00:00+02:00',
+  },
+  {
+    slug: 'blockchain-smart-contract-grade',
+    courseCode: 'MESIIN470625',
+    title: 'Smart Contract TP',
+    type: 'lab',
+    score: 17,
+    outOf: 20,
+    coefficient: 2,
+    status: 'published',
+    returnedAt: '2026-04-03T08:30:00+02:00',
+  },
+  {
+    slug: 'machine-learning-anomaly-lab-grade',
+    courseCode: 'MESIIN485925',
+    title: 'Anomaly Detection Lab',
+    type: 'lab',
+    score: 14,
+    outOf: 20,
+    coefficient: 1,
+    status: 'published',
+    returnedAt: '2026-03-29T16:00:00+02:00',
+  },
+  {
+    slug: 'machine-learning-final-qcm',
+    courseCode: 'MESIIN485925',
+    title: 'QCM Blanc Final',
+    type: 'quiz',
+    score: null,
+    outOf: 20,
+    coefficient: 1,
+    status: 'pending',
+    returnedAt: null,
+  },
+  {
+    slug: 'project-methodology-sprint-review-grade',
+    courseCode: 'MESIGP470325',
+    title: 'Sprint Review',
+    type: 'presentation',
+    score: 16,
+    outOf: 20,
+    coefficient: 2,
+    status: 'published',
+    returnedAt: '2026-04-02T15:00:00+02:00',
+  },
+  {
+    slug: 'cryptography-problem-set-1-grade',
+    courseCode: 'MESIIN484625',
+    title: 'Problem Set 1',
+    type: 'exercise',
+    score: 13,
+    outOf: 20,
+    coefficient: 1,
+    status: 'published',
+    returnedAt: '2026-03-31T17:00:00+02:00',
+  },
+  {
+    slug: 'rust-ownership-lab-grade',
+    courseCode: 'MESIIN473325',
+    title: 'Ownership Lab',
+    type: 'lab',
+    score: 18,
+    outOf: 20,
+    coefficient: 1,
+    status: 'published',
+    returnedAt: '2026-03-30T18:30:00+02:00',
+  },
+]
+
 const demoDiscovery = [
   'Resume IA de chaque cours en 30 secondes',
   'Agenda qui regroupe cours, rendus et examens',
@@ -294,8 +464,8 @@ export const demoOverview = {
   },
   courses: demoCourses,
   timeline: demoTimeline,
-  announcements: demoAnnouncements,
-  messages: demoMessages,
+  announcements: demoAnnouncements.slice(0, 4),
+  messages: demoMessages.slice(0, 3),
   discovery: demoDiscovery,
 }
 
@@ -334,6 +504,21 @@ export const demoAnnouncementsView = {
   },
 }
 
+function computeAverage(entries) {
+  const gradedEntries = entries.filter(entry => typeof entry.score === 'number')
+
+  if (!gradedEntries.length) {
+    return null
+  }
+
+  const totals = gradedEntries.reduce((accumulator, entry) => ({
+    coefficient: accumulator.coefficient + entry.coefficient,
+    score: accumulator.score + ((entry.score / entry.outOf) * 20 * entry.coefficient),
+  }), { coefficient: 0, score: 0 })
+
+  return Number((totals.score / totals.coefficient).toFixed(1))
+}
+
 export const demoProfileView = {
   student: demoStudent,
   summary: {
@@ -345,6 +530,41 @@ export const demoProfileView = {
   },
   focusCourses: demoCourses.filter(course => course.favorite || course.urgent).slice(0, 4),
   upcomingEntries: demoTimeline.slice(0, 3),
+}
+
+const demoGradeCourses = demoCourses.map(course => {
+  const evaluations = demoGrades.filter(entry => entry.courseCode === course.code)
+
+  return {
+    average: computeAverage(evaluations),
+    courseCode: course.code,
+    courseTitle: course.title,
+    lastReturnedAt: evaluations.find(entry => entry.returnedAt)?.returnedAt ?? null,
+    pendingCount: evaluations.filter(entry => entry.status !== 'published').length,
+    publishedCount: evaluations.filter(entry => entry.status === 'published').length,
+  }
+})
+
+export const demoAssignmentsView = {
+  student: demoStudent,
+  assignments: demoAssignments,
+  summary: {
+    total: demoAssignments.length,
+    dueSoon: demoAssignments.filter(item => item.status === 'due_soon').length,
+    inReview: demoAssignments.filter(item => item.status === 'in_review').length,
+    completed: demoAssignments.filter(item => item.status === 'submitted').length,
+  },
+}
+
+export const demoGradesView = {
+  student: demoStudent,
+  courses: demoGradeCourses,
+  recentGrades: demoGrades.filter(entry => entry.status === 'published').slice(0, 5),
+  summary: {
+    globalAverage: computeAverage(demoGrades),
+    pending: demoGrades.filter(entry => entry.status !== 'published').length,
+    returned: demoGrades.filter(entry => entry.status === 'published').length,
+  },
 }
 
 export const demoCourseDetails = Object.fromEntries(demoCourses.map(course => [
@@ -438,6 +658,15 @@ const demoAnnouncementRelations = {
   },
 }
 
+const demoAssignmentAnnouncementRelations = {
+  'advanced-probability-quiz-4': ['quiz-probability-ouvert'],
+  'blockchain-smart-contract-feedback': ['smart-contract-feedback-publie'],
+  'machine-learning-forecasting-kickoff': ['erreur-de-salle-corrigee', 'qcm-final-publie'],
+  'project-methodology-sprint-deck': ['project-review-room-update'],
+  'cryptography-problem-set-2': ['cryptography-series-release'],
+  'rust-borrow-checker-lab': ['rust-lab-checklist'],
+}
+
 for (const [courseCode, relations] of Object.entries(demoCourseRelations)) {
   if (demoCourseDetails[courseCode]) {
     demoCourseDetails[courseCode].relatedEntries = demoTimeline.filter(entry =>
@@ -473,6 +702,33 @@ for (const message of demoMessages) {
   }
 }
 
+export const demoAssignmentDetails = Object.fromEntries(demoAssignments.map(assignment => [
+  assignment.slug,
+  {
+    student: demoStudent,
+    assignment,
+    relatedAnnouncements: demoAnnouncements.filter(item =>
+      (demoAssignmentAnnouncementRelations[assignment.slug] ?? []).includes(item.slug),
+    ),
+    relatedCourse: demoCourses.find(course => course.code === assignment.courseCode) ?? null,
+  },
+]))
+
+export const demoGradeDetails = Object.fromEntries(demoCourses.map(course => {
+  const evaluations = demoGrades.filter(entry => entry.courseCode === course.code)
+
+  return [
+    course.code,
+    {
+      student: demoStudent,
+      course,
+      evaluations,
+      average: computeAverage(evaluations),
+      relatedAssignments: demoAssignments.filter(item => item.courseCode === course.code),
+    },
+  ]
+}))
+
 export const demoAnnouncementDetails = Object.fromEntries(demoAnnouncements.map(announcement => [
   announcement.slug,
   {
@@ -490,12 +746,15 @@ export const demoAnnouncementDetails = Object.fromEntries(demoAnnouncements.map(
 export const demoAdminView = {
   student: demoStudent,
   summary: {
+    assignments: demoAssignments.length,
     courses: demoCourses.length,
+    grades: demoGrades.length,
     announcements: demoAnnouncements.length,
     schedule: demoTimeline.length,
     messages: demoMessages.length,
   },
   sections: {
+    assignments: demoAssignments,
     courses: demoCourses.map(course => ({
       code: course.code,
       title: course.title,
@@ -503,6 +762,7 @@ export const demoAdminView = {
       accent: course.accent,
       glow: course.glow,
     })),
+    grades: demoGrades,
     announcements: demoAnnouncements.map(item => ({
       slug: item.slug,
       title: item.title,
@@ -516,6 +776,10 @@ export const demoAdminView = {
         ? 'MESIIN485925'
         : item.title.includes('Blockchain')
           ? 'MESIIN470625'
+          : item.title.includes('Project Methodology')
+            ? 'MESIGP470325'
+            : item.title.includes('Public-key Cryptography')
+              ? 'MESIIN484625'
         : item.title.includes('Rust')
           ? 'MESIIN473325'
           : item.title.includes('Advanced Probability')

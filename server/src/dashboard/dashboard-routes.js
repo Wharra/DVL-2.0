@@ -3,11 +3,15 @@ import {
   getAdminViewData,
   getAnnouncementDetailData,
   getAnnouncementsViewData,
+  getAssignmentDetailData,
+  getAssignmentsViewData,
   getCalendarEntryDetailData,
   getCalendarViewData,
   getCourseDetailData,
   getCoursesViewData,
   getDashboardOverview,
+  getGradeDetailData,
+  getGradesViewData,
   getMessageDetailData,
   getMessagesViewData,
   getProfileViewData,
@@ -87,6 +91,44 @@ function dashboardRoutes(app) {
     onRequest: [app.authenticate],
   }, async (request, reply) => {
     const payload = await getAnnouncementsViewData(request.currentUser)
+    return reply.send(payload)
+  })
+
+  app.get('/assignments', {
+    onRequest: [app.authenticate],
+  }, async (request, reply) => {
+    const payload = await getAssignmentsViewData(request.currentUser)
+    return reply.send(payload)
+  })
+
+  app.get('/assignments/:slug', {
+    onRequest: [app.authenticate],
+  }, async (request, reply) => {
+    const payload = await getAssignmentDetailData(request.currentUser, request.params.slug)
+
+    if (!payload) {
+      return reply.status(404).send({ error: 'Devoir introuvable' })
+    }
+
+    return reply.send(payload)
+  })
+
+  app.get('/grades', {
+    onRequest: [app.authenticate],
+  }, async (request, reply) => {
+    const payload = await getGradesViewData(request.currentUser)
+    return reply.send(payload)
+  })
+
+  app.get('/grades/:courseCode', {
+    onRequest: [app.authenticate],
+  }, async (request, reply) => {
+    const payload = await getGradeDetailData(request.currentUser, request.params.courseCode)
+
+    if (!payload) {
+      return reply.status(404).send({ error: 'Notes du cours introuvables' })
+    }
+
     return reply.send(payload)
   })
 
