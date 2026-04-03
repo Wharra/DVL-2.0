@@ -1,59 +1,86 @@
-// import User from './user-schema.js' // À décommenter lors de l'implémentation des routes
+import publicUserFields from './public-user-fields.js'
+import User from './user-schema.js'
 
 /**
  *
  * @param {import('fastify').FastifyInstance} app
  */
 function usersRoutes(app) {
-  app.get('/verify-email', async (request, _reply) => {
-    // Récupérer le token de validation depuis la querystring de la requête
+  app.get('/verify-email', async (request, reply) => {
     const { token } = request.query
 
-    // TODO: Valider la présence du token
+    if (!token || typeof token !== 'string') {
+      return reply.status(400).send({ error: 'Token de validation requis' })
+    }
 
-    // TODO: Rechercher l'utilisateur correspondant au token de validation
-    // tip: https://mongoosejs.com/docs/queries.html
-    // const user =
+    const user = await User.findOne({ validationToken: token })
 
-    // TODO: gérer le cas où le token est invalide ou expiré
+    if (!user) {
+      return reply.status(404).send({ error: 'Token de validation invalide ou expire' })
+    }
 
-    // TODO: vérifier si l'utilisateur a déjà validé son email
+    if (user.emailVerified) {
+      return reply.status(409).send({ error: 'Adresse email deja validee' })
+    }
 
-    // TODO: marquer l'email de l'utilisateur comme vérifié et supprimer le token de validation
-    // TODO: sauvegarder les modifications de l'utilisateur dans la base de données
+    user.emailVerified = true
+    user.validationToken = null
+    await user.save()
+
+    return reply.send({
+      message: 'Adresse email validee avec succes',
+      email: user.email,
+    })
   })
 
   app.get('/me', {
-    onRequest: [app.authenticate], // Protéger cette route pour qu'elle soit accessible uniquement aux utilisateurs authentifiés
+    onRequest: [app.authenticate],
   }, async (request, reply) => {
-    return reply.send({ user: request.user })
+    return reply.send({ user: request.currentUser })
   })
 
-  // TODO: protéger aussi les routes suivantes pour qu'elles soient accessibles uniquement aux utilisateurs authentifiés (et éventuellement avec des rôles spécifiques)
-  app.get('', async (request, reply) => {
-    // TODO: Implémenter la logique pour récupérer les utilisateurs depuis la base de données
-    // tip: https://mongoosejs.com/docs/queries.html
-    // TODO: Implémenter la pagination, les filtres, etc.
-    // tips: https://mongoosejs.com/docs/api/query.html#Query.prototype.sort()
-    //       https://mongoosejs.com/docs/api/query.html#Query.prototype.skip()
-    //       https://mongoosejs.com/docs/api/query.html#Query.prototype.limit()
-    return reply.send({ message: 'List of users' })
+  app.get('', {
+    onRequest: [app.authenticate],
+  }, async (_request, reply) => {
+    const users = await User.find({})
+      .select(publicUserFields)
+      .sort({ createdAt: -1 })
+      .lean()
+
+    return reply.send({ users })
   })
 
-  app.get('/:id', async (request, reply) => {
-    // Récupérer l'ID de l'utilisateur depuis les paramètres de la route
-    const { id } = request.params // Attention: les params sont toujours des strings, même si l'ID est un ObjectId dans MongoDB
-    // TODO: Implémenter la logique pour récupérer un utilisateur par ID depuis la base de données
-    // tip: https://mongoosejs.com/docs/queries.html
-    // TODO: gérer le cas où l'utilisateur n'existe pas
-    return reply.send({ message: `User with ID ${user._id}` })
-  })
-
-  app.delete('/:id', async (request, reply) => {
-    // Récupérer l'ID de l'utilisateur depuis les paramètres de la route
+  app.get('/:id', {
+    onRequest: [app.authenticate],
+  }, async (request, reply) => {
     const { id } = request.params
-    // TODO: Implémenter la logique pour supprimer un utilisateur par ID depuis la base de données
-    // tip: https://mongoosejs.com/docs/queries.html
+    const user = await User.findById(id)
+      .select(publicUserFields)
+      .lean()
+
+    if (!user) {
+      return reply.status(404).send({ error: 'Utilisateur introuvable' })
+    }
+
+    return reply.send({ user })
+  })
+
+  app.delete('/:id', {
+    onRequest: [app.authenticate],
+  }, async (request, reply) => {
+    const { id } = request.params
+    const deletedUser = await User.findByIdAndDelete(id)
+      .select(publicUserFields)
+      .lean()
+
+    if (!deletedUser) {
+      return reply.status(404).send({ error: 'Utilisateur introuvable' })
+    }
+
+    return reply.send({
+      message: 'Utilisateur supprime',
+      user: deletedUser,
+    })
   })
 }
 

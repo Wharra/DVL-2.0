@@ -1,11 +1,267 @@
-import { describe, it, expect } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { mount } from '@vue/test-utils'
+import { flushPromises, mount } from '@vue/test-utils'
+import { createPinia } from 'pinia'
+
 import App from '../App.vue'
+import router from '../router/index.js'
 
 describe('App', () => {
-  it('mounts renders properly', () => {
-    const wrapper = mount(App)
-    expect(wrapper.text()).toContain('You did it!')
+  beforeEach(() => {
+    vi.restoreAllMocks()
+  })
+
+  it('renders the login view on /login', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => new Response(
+      JSON.stringify({ error: 'Authentification requise' }),
+      {
+        status: 401,
+        headers: { 'Content-Type': 'application/json' },
+      },
+    )))
+
+    await router.push('/login')
+    await router.isReady()
+
+    const wrapper = mount(App, {
+      global: {
+        plugins: [createPinia(), router],
+      },
+    })
+
+    await flushPromises()
+
+    expect(wrapper.text()).toContain('Connexion etudiante')
+    expect(wrapper.text()).toContain('Explorer la demo')
+  })
+
+  it('renders the register view on /register', async () => {
+    vi.stubGlobal('fetch', vi.fn())
+
+    await router.push('/register')
+    await router.isReady()
+
+    const wrapper = mount(App, {
+      global: {
+        plugins: [createPinia(), router],
+      },
+    })
+
+    await flushPromises()
+
+    expect(wrapper.text()).toContain('Onboarding plus propre')
+    expect(wrapper.get('[data-testid="register-email"]')).toBeTruthy()
+  })
+
+  it('renders the dashboard in demo mode and filters courses', async () => {
+    vi.stubGlobal('fetch', vi.fn())
+
+    await router.push('/dashboard?demo=1')
+    await router.isReady()
+
+    const wrapper = mount(App, {
+      global: {
+        plugins: [createPinia(), router],
+      },
+    })
+
+    await flushPromises()
+    await wrapper.get('[data-testid="search-input"]').setValue('rust')
+
+    expect(wrapper.text()).toContain('Bonjour, Jordi')
+    expect(wrapper.findAll('[data-testid="course-card"]')).toHaveLength(1)
+    expect(wrapper.text()).toContain('Rust Programming')
+  })
+
+  it('renders the calendar view in demo mode', async () => {
+    vi.stubGlobal('fetch', vi.fn())
+
+    await router.push('/calendar?demo=1')
+    await router.isReady()
+
+    const wrapper = mount(App, {
+      global: {
+        plugins: [createPinia(), router],
+      },
+    })
+
+    await flushPromises()
+
+    expect(wrapper.text()).toContain('Calendrier')
+    expect(wrapper.findAll('[data-testid="calendar-entry"]')).toHaveLength(7)
+  })
+
+  it('renders the course detail page in demo mode', async () => {
+    vi.stubGlobal('fetch', vi.fn())
+
+    await router.push('/courses/MESIIN473325?demo=1')
+    await router.isReady()
+
+    const wrapper = mount(App, {
+      global: {
+        plugins: [createPinia(), router],
+      },
+    })
+
+    await flushPromises()
+
+    expect(wrapper.text()).toContain('Rust Programming')
+    expect(wrapper.text()).toContain('Sessions liees')
+  })
+
+  it('fills the blockchain course detail with linked schedule and announcements', async () => {
+    vi.stubGlobal('fetch', vi.fn())
+
+    await router.push('/courses/MESIIN470625?demo=1')
+    await router.isReady()
+
+    const wrapper = mount(App, {
+      global: {
+        plugins: [createPinia(), router],
+      },
+    })
+
+    await flushPromises()
+
+    expect(wrapper.text()).toContain('Blockchain Programming')
+    expect(wrapper.text()).toContain('Mar 10:15')
+    expect(wrapper.text()).toContain('Feedback smart contract disponible')
+  })
+
+  it('verifies an email token from the verification route', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => new Response(
+      JSON.stringify({
+        message: 'Adresse email validee avec succes',
+        email: 'jordi@demo.local',
+      }),
+      {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      },
+    )))
+
+    await router.push('/verify-email?token=abc123')
+    await router.isReady()
+
+    const wrapper = mount(App, {
+      global: {
+        plugins: [createPinia(), router],
+      },
+    })
+
+    await flushPromises()
+
+    expect(wrapper.text()).toContain('Email valide.')
+    expect(wrapper.text()).toContain('jordi@demo.local')
+  })
+
+  it('renders the messages view in demo mode', async () => {
+    vi.stubGlobal('fetch', vi.fn())
+
+    await router.push('/messages?demo=1')
+    await router.isReady()
+
+    const wrapper = mount(App, {
+      global: {
+        plugins: [createPinia(), router],
+      },
+    })
+
+    await flushPromises()
+
+    expect(wrapper.text()).toContain('Messages')
+    expect(wrapper.findAll('[data-testid="message-card"]')).toHaveLength(7)
+  })
+
+  it('renders the announcements view in demo mode', async () => {
+    vi.stubGlobal('fetch', vi.fn())
+
+    await router.push('/announcements?demo=1')
+    await router.isReady()
+
+    const wrapper = mount(App, {
+      global: {
+        plugins: [createPinia(), router],
+      },
+    })
+
+    await flushPromises()
+
+    expect(wrapper.text()).toContain('Annonces')
+    expect(wrapper.findAll('[data-testid="announcement-card"]')).toHaveLength(8)
+  })
+
+  it('renders the message detail page in demo mode', async () => {
+    vi.stubGlobal('fetch', vi.fn())
+
+    await router.push('/messages/ml-room-update?demo=1')
+    await router.isReady()
+
+    const wrapper = mount(App, {
+      global: {
+        plugins: [createPinia(), router],
+      },
+    })
+
+    await flushPromises()
+
+    expect(wrapper.text()).toContain('Machine Learning : changement de salle')
+    expect(wrapper.text()).toContain('Annonces associees')
+  })
+
+  it('renders the announcement detail page in demo mode', async () => {
+    vi.stubGlobal('fetch', vi.fn())
+
+    await router.push('/announcements/erreur-de-salle-corrigee?demo=1')
+    await router.isReady()
+
+    const wrapper = mount(App, {
+      global: {
+        plugins: [createPinia(), router],
+      },
+    })
+
+    await flushPromises()
+
+    expect(wrapper.text()).toContain('Erreur de salle corrigee')
+    expect(wrapper.text()).toContain('Conversations associees')
+  })
+
+  it('renders the profile view in demo mode', async () => {
+    vi.stubGlobal('fetch', vi.fn())
+
+    await router.push('/profile?demo=1')
+    await router.isReady()
+
+    const wrapper = mount(App, {
+      global: {
+        plugins: [createPinia(), router],
+      },
+    })
+
+    await flushPromises()
+
+    expect(wrapper.text()).toContain('Jordi')
+    expect(wrapper.text()).toContain('Profil etudiant')
+    expect(wrapper.text()).toContain('Cours a garder en vue')
+  })
+
+  it('renders the admin view in demo mode', async () => {
+    vi.stubGlobal('fetch', vi.fn())
+
+    await router.push('/admin?demo=1')
+    await router.isReady()
+
+    const wrapper = mount(App, {
+      global: {
+        plugins: [createPinia(), router],
+      },
+    })
+
+    await flushPromises()
+
+    expect(wrapper.text()).toContain('Admin content studio')
+    expect(wrapper.text()).toContain('Collections')
+    expect(wrapper.text()).toContain('Advanced Probability')
   })
 })

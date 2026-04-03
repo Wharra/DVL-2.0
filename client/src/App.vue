@@ -1,11 +1,37 @@
-<script setup></script>
-
 <template>
-  <h1>You did it!</h1>
-  <p>
-    Visit <a href="https://vuejs.org/" target="_blank" rel="noopener">vuejs.org</a> to read the
-    documentation
-  </p>
+  <RouterView />
 </template>
 
-<style scoped></style>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap');
+
+:root {
+  color: #111827;
+  font-family: 'Instrument Sans', 'Segoe UI', sans-serif;
+  background:
+    radial-gradient(circle at top left, rgba(250, 204, 21, 0.18), transparent 26%),
+    linear-gradient(180deg, #f8f5ee 0%, #f3efe6 100%);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  color: #111827;
+  background:
+    radial-gradient(circle at top left, rgba(250, 204, 21, 0.18), transparent 26%),
+    linear-gradient(180deg, #f8f5ee 0%, #f3efe6 100%);
+}
+
+button,
+input {
+  font: inherit;
+}
+
+a {
+  color: inherit;
+}
+</style>

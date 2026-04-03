@@ -2,13 +2,14 @@ import { randomBytes } from 'node:crypto'
 
 import config from '../config.js'
 import { sendRegistrationEmail } from '../services/mailer.js'
-import User from '../users/user-schema.js'
 import { hashPassword, verifyPassword } from '../utils/crypto.js'
+import publicUserFields from './public-user-fields.js'
+import User from './user-schema.js'
 
 const emailRegex = /^(?:[^<>()[\]\\.,;:\s@"]+(?:\.[^<>()[\]\\.,;:\s@"]+)*|".+")@(?:\[\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\]|(?:[a-z\-0-9]+\.)+[a-z]{2,})$/i
 
 function buildVerificationUrl(validationToken) {
-  return `${config.appBaseUrl}/users/verify-email?token=${validationToken}`
+  return `${config.frontBaseUrl}/verify-email?token=${validationToken}`
 }
 
 function withVerificationDebugData(payload, validationToken) {
@@ -37,43 +38,51 @@ async function sendVerificationEmail(app, email, validationToken) {
   })
 }
 
+async function getPublicUser(userId) {
+  return User.findById(userId)
+    .select(publicUserFields)
+    .lean()
+}
+
 /**
  *
  * @param {import('fastify').FastifyInstance} app
  */
 function authRoutes(app) {
   app.post('/register', async (request, reply) => {
-    // Récupérer et valider les données d'inscription
     const { email, password, username } = request.body
 
-    // Validation basique des champs
     if (!email || !password || !username) {
       return reply.status(400).send({ error: 'Email, password et username requis' })
     }
 
-    // Normaliser l'email (trim et lowercase)
     const normalizedEmail = email.trim().toLowerCase()
 
-    // Valider le format de l'email
     if (!emailRegex.test(normalizedEmail)) {
       return reply.status(400).send({ error: 'Email invalide' })
     }
 
-    // Vérifier si l'utilisateur existe déjà
-    // TODO: faire une vérification sur le username aussi
-    const existingUser = await User.findOne({ email: normalizedEmail })
-    if (existingUser) {
-      return reply.status(409).send({ error: 'Cet email est déjà utilisé' })
+    const existingUser = await User.findOne({
+      $or: [
+        { email: normalizedEmail },
+        { username: username.trim() },
+      ],
+    }).lean()
+
+    if (existingUser?.email === normalizedEmail) {
+      return reply.status(409).send({ error: 'Cet email est deja utilise' })
     }
 
-    // Créer le hash du mot de passe et le token de validation
+    if (existingUser?.username === username.trim()) {
+      return reply.status(409).send({ error: 'Ce username est deja utilise' })
+    }
+
     const passwordHash = await hashPassword(password)
     const validationToken = randomBytes(32).toString('hex')
 
-    // Créer l'utilisateur dans la base de données (compte non validé)
     const user = await User.create({
       email: normalizedEmail,
-      username: `${username}-${validationToken.slice(0, 6)}`,
+      username: username.trim(),
       passwordHash,
       validationToken,
     })
@@ -87,54 +96,45 @@ function authRoutes(app) {
       }, 'Failed to send registration email')
 
       return reply.status(503).send(withVerificationDebugData({
-        error: 'Compte créé, mais l\'email de validation n\'a pas pu être envoyé. Réessayez plus tard.',
+        error: 'Compte cree, mais l email de validation n a pas pu etre envoye. Reessayez plus tard.',
         email: user.email,
       }, validationToken))
     }
 
     return reply.status(201).send(withVerificationDebugData({
-      message: 'Utilisateur créé avec succès. Veuillez vérifier votre email pour confirmer votre compte.',
+      message: 'Utilisateur cree avec succes. Verifiez votre email pour confirmer votre compte.',
       email: user.email,
     }, validationToken))
   })
 
   app.post('/resend-verification-email', async (request, reply) => {
-    // Récupérer l'email de l'utilisateur
     const { email } = request.body
 
-    // Validation basique de l'email
     if (!email) {
       return reply.status(400).send({ error: 'Email requis' })
     }
 
-    // Normaliser l'email (trim et lowercase)
     const normalizedEmail = email.trim().toLowerCase()
 
-    // Valider le format de l'email
     if (!emailRegex.test(normalizedEmail)) {
       return reply.status(400).send({ error: 'Email invalide' })
     }
 
-    // Récupérer l'utilisateur depuis la base de données
     const user = await User.findOne({ email: normalizedEmail })
 
-    // Vérifier que l'utilisateur existe
     if (!user) {
       return reply.status(404).send({ error: 'Utilisateur introuvable' })
     }
 
-    // Vérifier que l'email n'est pas déjà validé
     if (user.emailVerified) {
-      return reply.status(409).send({ error: 'Adresse email déjà validée' })
+      return reply.status(409).send({ error: 'Adresse email deja validee' })
     }
 
-    // Générer un nouveau token de validation si l'utilisateur n'en a pas déjà un (ex: si le token précédent a expiré ou a été perdu)
     if (!user.validationToken) {
       user.validationToken = randomBytes(32).toString('hex')
       await user.save()
     }
 
-    // Envoyer l'email de validation
     try {
       await sendVerificationEmail(app, user.email, user.validationToken)
     } catch (error) {
@@ -143,49 +143,43 @@ function authRoutes(app) {
         email: user.email,
       }, 'Failed to resend registration email')
 
-      // Renvoyer une 503 pour indiquer que le service de mail est temporairement indisponible, mais sans révéler que l'utilisateur existe ou pas (pour éviter les attaques de type enumeration)
       return reply.status(503).send(withVerificationDebugData({
-        error: 'L’email de validation n’a pas pu être envoyé. Réessayez plus tard.',
+        error: 'L email de validation n a pas pu etre envoye. Reessayez plus tard.',
       }, user.validationToken))
     }
 
     return reply.send(withVerificationDebugData({
-      message: 'Email de validation renvoyé avec succès.',
+      message: 'Email de validation renvoye avec succes.',
       email: user.email,
     }, user.validationToken))
   })
 
   app.post('/login', async (request, reply) => {
-    // Récupérer et valider les données de connexion
     const { email, password } = request.body
 
-    // Validation basique des champs
     if (!email || !password) {
       return reply.status(400).send({ error: 'Email et mot de passe requis' })
     }
 
-    // Normaliser l'email (trim et lowercase)
     const normalizedEmail = email.trim().toLowerCase()
-    // Récupérer l'utilisateur depuis la base de données
     const user = await User.findOne({ email: normalizedEmail })
 
-    // Vérifier que l'utilisateur existe
     if (!user) {
       return reply.status(401).send({ error: 'Identifiants invalides' })
     }
 
-    // Vérifier que le mot de passe est correct
     const passwordMatches = await verifyPassword(password, user.passwordHash)
+
     if (!passwordMatches) {
       return reply.status(401).send({ error: 'Identifiants invalides' })
     }
 
-    // Vérifier que l'email est validé
     if (!user.emailVerified) {
-      return reply.status(403).send({ error: 'Veuillez valider votre adresse email avant de vous connecter' })
+      return reply.status(403).send({
+        error: 'Veuillez valider votre adresse email avant de vous connecter',
+      })
     }
 
-    // Générer un token JWT...
     const token = await reply.jwtSign({
       sub: user._id.toString(),
       email: user.email,
@@ -194,7 +188,6 @@ function authRoutes(app) {
       expiresIn: '300s',
     })
 
-    // ...et le stocker dans un cookie sécurisé
     reply.setCookie(config.jwt.cookieName, token, {
       path: '/',
       httpOnly: true,
@@ -202,7 +195,29 @@ function authRoutes(app) {
       secure: config.env === 'production',
     })
 
-    return reply.send({ message: 'Authentification réussie' })
+    const publicUser = await getPublicUser(user._id)
+
+    return reply.send({
+      message: 'Authentification reussie',
+      user: publicUser,
+    })
+  })
+
+  app.get('/session', {
+    onRequest: [app.authenticate],
+  }, async (request, reply) => {
+    return reply.send({ user: request.currentUser })
+  })
+
+  app.post('/logout', async (_request, reply) => {
+    reply.clearCookie(config.jwt.cookieName, {
+      path: '/',
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: config.env === 'production',
+    })
+
+    return reply.send({ message: 'Deconnexion reussie' })
   })
 }
 

@@ -1,6 +1,7 @@
 import Fastify from 'fastify'
 
 import config from './config.js'
+import dashboardRoutes from './dashboard/dashboard-routes.js'
 import envToLogger from './logger.js'
 import authPlugin from './plugins/auth.js'
 import mongoosePlugin from './plugins/mongoose.js'
@@ -16,6 +17,7 @@ async function buildApp() {
   await fastify.register(authPlugin)
   await fastify.register(mongoosePlugin)
   fastify.register(authRoutes, { prefix: '/auth' })
+  fastify.register(dashboardRoutes, { prefix: '/dashboard' })
   fastify.register(usersRoutes, { prefix: '/users' })
   fastify.register(rootRoutes)
 
