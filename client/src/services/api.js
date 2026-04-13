@@ -7,13 +7,15 @@ export class ApiError extends Error {
   }
 }
 
+const API_BASE = import.meta.env.VITE_API_URL ?? ''
+
 export async function apiRequest(path, options = {}) {
   const { body, headers, ...rest } = options
 
   let response
 
   try {
-    response = await fetch(path, {
+    response = await fetch(`${API_BASE}${path}`, {
       credentials: 'include',
       headers: {
         ...(body ? { 'Content-Type': 'application/json' } : {}),
